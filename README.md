@@ -115,4 +115,4 @@ curl -X POST "http://localhost:8000/api/v1/analyses" \
 Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure that your code adheres to the project's coding standards and includes appropriate tests.
 
 ## License
-This project is not currently licensed. Please check back later for licensing details.
+This project is not currently licensed. Please check back later for licensing details
