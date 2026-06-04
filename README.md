@@ -99,20 +99,11 @@ curl -X POST "http://localhost:8000/api/v1/analyses" \
 }'
 ```
 
-## What Changed
-- `287434e` 2026-06-04 — Update README to include testing functionality section (joebery)
-- `0af0ad2` 2026-06-04 — Refactor README content and formatting (joebery)
-- `13bb690` 2026-06-04 — feat: add project structure tree and commit history to README generation (joebery)
-- `39a36b3` 2026-06-04 — docs: generate README with ReadmeAI (joebery)
-- `bd13813` 2026-06-04 — Refactor README formatting and content (joebery)
-- `367f94b` 2026-06-04 — docs: generate README with ReadmeAI (joebery)
-- `d0353b2` 2026-06-04 — feat: github service, file reader, tokenizer, estimate and generate endpoints (joebery)
-- `4a08807` 2026-06-04 — fix: add .env to gitignore (joebery)
-- `06d90f3` 2026-06-04 — fix: remove .env from tracking (joebery)
-- `a4f6b8e` 2026-06-04 — Create README.md for ReadmeAI project (joebery)
+## Recent Updates
+- 2026-06-04 — Fixed formatting in the license section of the README.md file.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure that your code adheres to the project's coding standards and includes appropriate tests.
 
 ## License
-This project is not currently licensed. Please check back later for licensing details
+This project is not currently licensed. Please check back later for licensing details.
