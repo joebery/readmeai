@@ -1,12 +1,10 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, HttpUrl, field_validator
+from pydantic import BaseModel, field_validator
 
 from app.models import AnalysisStatus
 
-
-# ── Repo ──────────────────────────────────────────────────────────────────────
 
 class RepoBase(BaseModel):
     owner: str
@@ -26,8 +24,6 @@ class RepoResponse(RepoBase):
 
     model_config = {"from_attributes": True}
 
-
-# ── Estimate ──────────────────────────────────────────────────────────────────
 
 class EstimateRequest(BaseModel):
     repo_url: str
@@ -49,13 +45,12 @@ class EstimateResponse(BaseModel):
     estimated_output_tokens: int
     estimated_cost_usd: float
     model: str
-    analysis_id: uuid.UUID  # pre-created so user can confirm by ID
+    analysis_id: uuid.UUID
 
-
-# ── Analysis ──────────────────────────────────────────────────────────────────
 
 class AnalysisCreate(BaseModel):
-    analysis_id: uuid.UUID   # returned from estimate step
+    analysis_id: uuid.UUID
+    github_token: str
     openai_key: str
     confirmed: bool
 

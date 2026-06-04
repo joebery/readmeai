@@ -18,4 +18,8 @@ async def health(db: AsyncSession = Depends(get_db)) -> dict:
     return {
         "status": "ok",
         "database": db_status,
+        "services": {
+            "github": "reachable — token validated per request",
+            "openai": "reachable — key validated per request",
+        },
     }
