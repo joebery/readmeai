@@ -1,5 +1,5 @@
-```markdown
-# ReadmeAI ![Python](https://img.shields.io/badge/language-Python-blue) ![License](https://img.shields.io/badge/license-Not%20Specified-lightgrey)
+# ReadmeAI
+![Python](https://img.shields.io/badge/language-Python-blue) ![License](https://img.shields.io/badge/license-Not%20Specified-lightgrey)
 
 ## Description
 ReadmeAI is an AI-powered README generator that automates the creation of professional README files for GitHub repositories. By simply pasting a GitHub repository URL, ReadmeAI reads the repository's files, estimates the token cost for generating a README, and upon your confirmation, generates and pushes a polished README directly to your repository.
@@ -43,8 +43,7 @@ docker-compose up --build
 Contributions are welcome! Please fork the repository and submit a pull request with your changes.
 
 ## License
-This project is licensed under the terms of the MIT license. For more details, please refer to the LICENSE file.
+This project is licensed under the terms of the MIT license.
 
 ## Status
 Work in progress. Features and improvements are being actively developed.
-```
