@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import create_tables
-from app.routers import analyses, health
+from app.routers import analyses, health, repos, webhook
 
 
 @asynccontextmanager
@@ -31,6 +31,8 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(analyses.router)
+app.include_router(repos.router)
+app.include_router(webhook.router)
 
 
 @app.get("/")

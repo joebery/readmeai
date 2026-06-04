@@ -94,6 +94,51 @@ class GitHubClient:
                 for c in r.json()
             ]
 
+    async def get_push_range_commits(
+        self, owner: str, name: str, before_sha: str | None, after_sha: str
+    ) -> list[dict]:
+        if before_sha is None:
+            commits = await self.get_recent_commits(owner, name, limit=1)
+            return commits
+
+        async with httpx.AsyncClient() as client:
+            r = await client.get(
+                f"{self.BASE_URL}/repos/{owner}/{name}/compare/{before_sha}...{after_sha}",
+                headers=self.headers,
+            )
+            if not r.is_success:
+                return []
+            data = r.json()
+
+        return [
+            {
+                "sha": c["sha"][:7],
+                "message": c["commit"]["message"].split("\n")[0],
+                "author": c["commit"]["author"]["name"],
+                "date": c["commit"]["author"]["date"][:10],
+            }
+            for c in data.get("commits", [])
+            if "[bot]" not in c["commit"]["author"]["name"].lower()
+            and "readmeai" not in c["commit"]["message"].lower()
+        ]
+
+    async def get_changed_files_for_commits(
+        self, owner: str, name: str, commits: list[dict]
+    ) -> list[str]:
+        changed = set()
+        async with httpx.AsyncClient() as client:
+            for commit in commits:
+                r = await client.get(
+                    f"{self.BASE_URL}/repos/{owner}/{name}/commits/{commit['sha']}",
+                    headers=self.headers,
+                )
+                if not r.is_success:
+                    continue
+                for f in r.json().get("files", []):
+                    if f["status"] != "removed":
+                        changed.add(f["filename"])
+        return list(changed)
+
     async def push_readme(
         self,
         owner: str,
@@ -104,7 +149,7 @@ class GitHubClient:
     ) -> dict[str, Any]:
         encoded = base64.b64encode(content.encode("utf-8")).decode("utf-8")
         body: dict[str, Any] = {
-            "message": "docs: generate README with ReadmeAI",
+            "message": "docs: update README [bot] — ReadmeAI",
             "content": encoded,
             "branch": branch,
         }

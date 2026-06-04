@@ -15,6 +15,7 @@ class RepoBase(BaseModel):
     stars: int = 0
     license_name: str | None = None
     topics: str | None = None
+    locked_sections: str | None = None
 
 
 class RepoResponse(RepoBase):
@@ -23,6 +24,10 @@ class RepoResponse(RepoBase):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class RepoLocksUpdate(BaseModel):
+    locked_sections: list[str]
 
 
 class EstimateRequest(BaseModel):
@@ -62,6 +67,43 @@ class AnalysisCreate(BaseModel):
                 "confirmed must be true — call the estimate endpoint first "
                 "and confirm the token cost before proceeding"
             )
+        return v
+
+
+class UpdateEstimateRequest(BaseModel):
+    repo_url: str
+    github_token: str
+
+    @field_validator("repo_url")
+    @classmethod
+    def validate_github_url(cls, v: str) -> str:
+        if "github.com" not in v:
+            raise ValueError("URL must be a GitHub repository URL")
+        return v.strip().rstrip("/").removesuffix(".git")
+
+
+class UpdateEstimateResponse(BaseModel):
+    repo_full_name: str
+    commits_in_window: int
+    changed_file_count: int
+    estimated_input_tokens: int
+    estimated_output_tokens: int
+    estimated_cost_usd: float
+    model: str
+    analysis_id: uuid.UUID
+
+
+class UpdateConfirm(BaseModel):
+    analysis_id: uuid.UUID
+    github_token: str
+    openai_key: str
+    confirmed: bool
+
+    @field_validator("confirmed")
+    @classmethod
+    def must_be_confirmed(cls, v: bool) -> bool:
+        if not v:
+            raise ValueError("confirmed must be true")
         return v
 
 
