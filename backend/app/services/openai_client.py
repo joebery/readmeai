@@ -13,4 +13,15 @@ async def generate_readme(prompt: str, api_key: str) -> str:
         temperature=0.3,
     )
 
-    return response.choices[0].message.content
+    content = response.choices[0].message.content
+
+    # Strip markdown code fences if model wraps output in them
+    content = content.strip()
+    if content.startswith("```markdown"):
+        content = content[len("```markdown"):]
+    if content.startswith("```"):
+        content = content[3:]
+    if content.endswith("```"):
+        content = content[:-3]
+
+    return content.strip()

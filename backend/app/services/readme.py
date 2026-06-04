@@ -9,7 +9,6 @@ async def run_initial_pipeline(
     name: str,
     github_token: str,
     openai_key: str,
-    branch: str = "main",
 ) -> dict:
     client = GitHubClient(token=github_token)
 
@@ -25,7 +24,10 @@ async def run_initial_pipeline(
         branch=branch,
     )
 
-    # 3. Check for existing README sha so we can overwrite not duplicate
+    # 3. Fetch recent commits
+    commits = await client.get_recent_commits(owner, name, limit=10)
+
+    # 4. Check for existing README sha
     existing_sha = None
     existing_content = await client.get_file_content(owner, name, "README.md")
     if existing_content is not None:
@@ -41,11 +43,11 @@ async def run_initial_pipeline(
             if r.is_success:
                 existing_sha = r.json().get("sha")
 
-    # 4. Build prompt and generate README
-    prompt = build_prompt(metadata, files)
+    # 5. Build prompt and generate
+    prompt = build_prompt(metadata, files, commits)
     readme_content = await generate_readme(prompt, openai_key)
 
-    # 5. Push to GitHub
+    # 6. Push to GitHub
     result = await client.push_readme(
         owner=owner,
         name=name,

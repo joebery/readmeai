@@ -22,7 +22,6 @@ class GitHubClient:
             r.raise_for_status()
             data = r.json()
 
-        # Fetch topics (requires separate accept header)
         async with httpx.AsyncClient() as client:
             t = await client.get(
                 f"{self.BASE_URL}/repos/{owner}/{name}/topics",
@@ -76,6 +75,24 @@ class GitHubClient:
             return base64.b64decode(data["content"]).decode("utf-8", errors="replace")
         except Exception:
             return None
+
+    async def get_recent_commits(self, owner: str, name: str, limit: int = 10) -> list[dict]:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(
+                f"{self.BASE_URL}/repos/{owner}/{name}/commits?per_page={limit}",
+                headers=self.headers,
+            )
+            if not r.is_success:
+                return []
+            return [
+                {
+                    "sha": c["sha"][:7],
+                    "message": c["commit"]["message"].split("\n")[0],
+                    "author": c["commit"]["author"]["name"],
+                    "date": c["commit"]["author"]["date"][:10],
+                }
+                for c in r.json()
+            ]
 
     async def push_readme(
         self,
