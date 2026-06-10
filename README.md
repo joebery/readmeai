@@ -56,6 +56,7 @@ ReadmeAI is an AI-powered README generator that creates comprehensive and profes
 │   │   ├── layout.jsx
 │   │   └── page.jsx
 │   ├── components
+│   │   ├── ReadmeComparison.jsx
 │   │   └── StylePicker.jsx
 │   ├── Dockerfile
 │   ├── next.config.js
@@ -88,52 +89,31 @@ GITHUB_TOKEN=your_github_token
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-### Build and Run the Application
+### Run the Application
+To run the application, use Docker Compose:
 ```bash
 docker-compose up --build
 ```
 
 ## Usage
-
-### Estimate README Generation
-To estimate the README generation for a repository, send a POST request to the estimate endpoint:
-```bash
-curl -X POST http://localhost:8000/api/v1/analyses/estimate \
--H "Content-Type: application/json" \
--d '{
-  "repo_url": "https://github.com/yourusername/yourrepo",
-  "github_token": "your_github_token",
-  "style": "professional"
-}'
-```
-
-### Confirm and Generate README
-Once you have the estimate, confirm the generation:
-```bash
-curl -X POST http://localhost:8000/api/v1/analyses \
--H "Content-Type: application/json" \
--d '{
-  "analysis_id": "your_analysis_id",
-  "github_token": "your_github_token",
-  "openai_key": "your_openai_key",
-  "confirmed": true
-}'
-```
+1. Navigate to `http://localhost:3000` in your web browser.
+2. Paste your GitHub repository URL into the designated field.
+3. Enter your GitHub token and OpenAI API key.
+4. Select a style for your README.
+5. Click on "Generate README" to initiate the process.
 
 ## Recent Updates
-- **2026-06-10**: Merged branch 'main' of https://github.com/joebery/readmeai.
-- **2026-06-10**: Added multi-language badges, preview before push, regenerate with feedback, discard, and style picker features.
-- **2026-06-10**: Updated README documentation.
-- **2026-06-10**: Implemented frontend scaffold, analyze page, style picker, and preview/push/regenerate endpoints.
-- **2026-06-04**: Introduced mode 2 webhook, bot loop prevention, locked sections, and recent updates functionality.
-- **2026-06-04**: Updated README documentation.
-- **2026-06-04**: Fixed README.md license section formatting.
-- **2026-06-04**: Generated README with ReadmeAI.
-- **2026-06-04**: Updated README to include testing functionality section.
-- **2026-06-04**: Refactored README content and formatting.
+- `c4ed04c` 2026-06-10 — feat: multi-language badges, preview before push, regenerate with feedback, discard, style picker (joebery)
+- `8c1c5f1` 2026-06-10 — feat: frontend scaffold, analyze page, style picker, preview/push/regenerate endpoints (joebery)
+- `0076c17` 2026-06-04 — feat: mode 2 webhook, bot loop prevention, locked sections, recent updates (joebery)
 
 ## Contributing
-Contributions to ReadmeAI are welcome! Please feel free to submit a pull request or open an issue for any enhancements, bug fixes, or suggestions.
+We welcome contributions to ReadmeAI! Please follow these steps to contribute:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes and commit them (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/YourFeature`).
+5. Open a Pull Request.
 
 ## License
-This project is not licensed under any specific license. Please check the repository for more details.
+This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
