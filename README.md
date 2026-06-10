@@ -1,4 +1,4 @@
-# ReadmeAI ![Python](https://img.shields.io/badge/python-3.12-blue) ![License](https://img.shields.io/badge/license-not%20specified-lightgrey)
+# ReadmeAI ![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow) ![License](https://img.shields.io/badge/license-not%20specified-lightgrey)
 
 ## Description
 ReadmeAI is an AI-powered README generator that creates comprehensive and professional README files for your GitHub repositories. By leveraging OpenAI's language model, ReadmeAI analyzes your repository's structure, files, and recent commits to generate a tailored README that enhances your project's visibility and usability.
@@ -13,8 +13,8 @@ ReadmeAI is an AI-powered README generator that creates comprehensive and profes
 
 | Technology         | Description                                   |
 |--------------------|-----------------------------------------------|
-| Python             | The programming language used for the backend. |
-| FastAPI            | A modern web framework for building APIs.    |
+| JavaScript         | The programming language used for the frontend. |
+| FastAPI            | A modern web framework for building APIs in the backend. |
 | PostgreSQL         | A powerful, open-source relational database.  |
 | Redis              | In-memory data structure store for caching.   |
 | OpenAI             | AI model used for generating README content.  |
@@ -27,14 +27,17 @@ ReadmeAI is an AI-powered README generator that creates comprehensive and profes
 │   │   ├── routers
 │   │   │   ├── __init__.py
 │   │   │   ├── analyses.py
-│   │   │   └── health.py
+│   │   │   ├── health.py
+│   │   │   ├── repos.py
+│   │   │   └── webhook.py
 │   │   ├── services
 │   │   │   ├── __init__.py
 │   │   │   ├── file_reader.py
 │   │   │   ├── github.py
 │   │   │   ├── openai_client.py
 │   │   │   ├── readme.py
-│   │   │   └── tokenizer.py
+│   │   │   ├── tokenizer.py
+│   │   │   └── update.py
 │   │   ├── config.py
 │   │   ├── database.py
 │   │   ├── main.py
@@ -42,6 +45,23 @@ ReadmeAI is an AI-powered README generator that creates comprehensive and profes
 │   │   └── schemas.py
 │   ├── Dockerfile
 │   └── requirements.txt
+├── frontend
+│   ├── app
+│   │   ├── analyses
+│   │   │   └── [id]
+│   │   │       └── page.jsx
+│   │   ├── analyze
+│   │   │   └── page.jsx
+│   │   ├── globals.css
+│   │   ├── layout.jsx
+│   │   └── page.jsx
+│   ├── components
+│   │   └── StylePicker.jsx
+│   ├── Dockerfile
+│   ├── next.config.js
+│   ├── package.json
+│   ├── postcss.config.js
+│   └── tailwind.config.js
 ├── postgres
 │   └── init.sql
 ├── README.md
@@ -94,16 +114,19 @@ curl -X POST "http://localhost:8000/api/v1/analyses" \
 -d '{
   "analysis_id": "your_analysis_id",
   "github_token": "your_github_token",
-  "openai_key": "your_openai_api_key",
+  "openai_key": "your_openai_key",
   "confirmed": true
 }'
 ```
 
 ## Recent Updates
-- 2026-06-04 — Fixed formatting in the license section of the README.md file.
+- **2026-06-10**: Frontend scaffold, analyze page, style picker, preview/push/regenerate endpoints implemented.
+- **2026-06-04**: Added mode 2 webhook, bot loop prevention, locked sections, and recent updates functionality.
+- **2026-06-04**: Updated README formatting and content for clarity and completeness.
+- **2026-06-04**: Enhanced README generation capabilities with additional project structure and commit history details.
 
 ## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure that your code adheres to the project's coding standards and includes appropriate tests.
+Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bugs you encounter.
 
 ## License
-This project is not currently licensed. Please check back later for licensing details.
+This project is licensed under an unspecified license. Please check the repository for more details.
