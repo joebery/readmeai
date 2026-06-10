@@ -9,6 +9,9 @@ async def run_initial_pipeline(
     name: str,
     github_token: str,
     openai_key: str,
+    style_prompt: str | None = None,
+    feedback: str | None = None,
+    existing_readme: str | None = None,
 ) -> dict:
     client = GitHubClient(token=github_token)
 
@@ -27,7 +30,35 @@ async def run_initial_pipeline(
     # 3. Fetch recent commits
     commits = await client.get_recent_commits(owner, name, limit=10)
 
-    # 4. Check for existing README sha
+    # 4. Build prompt and generate — do NOT push yet
+    prompt = build_prompt(
+        metadata=metadata,
+        files=files,
+        commits=commits,
+        style_prompt=style_prompt,
+        feedback=feedback,
+        existing_readme=existing_readme,
+    )
+    readme_content = await generate_readme(prompt, openai_key)
+
+    return {
+        "readme_content": readme_content,
+        "file_count": total_count,
+        "filtered_file_count": len(files),
+        "default_branch": branch,
+    }
+
+
+async def push_readme_to_github(
+    owner: str,
+    name: str,
+    github_token: str,
+    readme_content: str,
+    branch: str = "main",
+) -> dict:
+    client = GitHubClient(token=github_token)
+
+    # Get existing README sha if it exists
     existing_sha = None
     existing_content = await client.get_file_content(owner, name, "README.md")
     if existing_content is not None:
@@ -43,11 +74,6 @@ async def run_initial_pipeline(
             if r.is_success:
                 existing_sha = r.json().get("sha")
 
-    # 5. Build prompt and generate
-    prompt = build_prompt(metadata, files, commits)
-    readme_content = await generate_readme(prompt, openai_key)
-
-    # 6. Push to GitHub
     result = await client.push_readme(
         owner=owner,
         name=name,
@@ -56,13 +82,7 @@ async def run_initial_pipeline(
         existing_sha=existing_sha,
     )
 
-    commit_sha = result.get("commit", {}).get("sha", "")
-    commit_url = result.get("commit", {}).get("html_url", "")
-
     return {
-        "readme_content": readme_content,
-        "commit_sha": commit_sha,
-        "commit_url": commit_url,
-        "file_count": total_count,
-        "filtered_file_count": len(files),
+        "commit_sha": result.get("commit", {}).get("sha", ""),
+        "commit_url": result.get("commit", {}).get("html_url", ""),
     }

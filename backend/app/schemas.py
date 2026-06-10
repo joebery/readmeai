@@ -33,6 +33,8 @@ class RepoLocksUpdate(BaseModel):
 class EstimateRequest(BaseModel):
     repo_url: str
     github_token: str
+    style: str | None = None
+    style_url: str | None = None
 
     @field_validator("repo_url")
     @classmethod
@@ -58,16 +60,29 @@ class AnalysisCreate(BaseModel):
     github_token: str
     openai_key: str
     confirmed: bool
+    style: str | None = None
+    style_url: str | None = None
 
     @field_validator("confirmed")
     @classmethod
     def must_be_confirmed(cls, v: bool) -> bool:
         if not v:
             raise ValueError(
-                "confirmed must be true — call the estimate endpoint first "
-                "and confirm the token cost before proceeding"
+                "confirmed must be true — call the estimate endpoint first"
             )
         return v
+
+
+class PushRequest(BaseModel):
+    github_token: str
+
+
+class RegenerateRequest(BaseModel):
+    openai_key: str
+    github_token: str
+    feedback: str | None = None
+    style: str | None = None
+    style_url: str | None = None
 
 
 class UpdateEstimateRequest(BaseModel):
@@ -118,6 +133,7 @@ class AnalysisResponse(BaseModel):
     estimated_output_tokens: int | None = None
     estimated_cost_usd: str | None = None
     readme_content: str | None = None
+    previous_readme: str | None = None
     commit_url: str | None = None
     commit_sha: str | None = None
     error_message: str | None = None

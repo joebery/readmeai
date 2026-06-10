@@ -33,7 +33,7 @@ class Repo(Base):
     stars: Mapped[int] = mapped_column(Integer, default=0)
     license_name: Mapped[str | None] = mapped_column(String(200))
     topics: Mapped[str | None] = mapped_column(Text)
-    locked_sections: Mapped[str | None] = mapped_column(Text)  # comma-separated
+    locked_sections: Mapped[str | None] = mapped_column(Text)
     webhook_secret: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
@@ -60,6 +60,8 @@ class Analysis(Base):
         Enum(AnalysisStatus), default=AnalysisStatus.queued, nullable=False
     )
     mode: Mapped[str] = mapped_column(String(50), default="initial")
+    style: Mapped[str | None] = mapped_column(String(100))
+    default_branch: Mapped[str | None] = mapped_column(String(100))
 
     # Token estimate
     file_count: Mapped[int | None] = mapped_column(Integer)
@@ -70,6 +72,7 @@ class Analysis(Base):
 
     # Result
     readme_content: Mapped[str | None] = mapped_column(Text)
+    previous_readme: Mapped[str | None] = mapped_column(Text)
     commit_url: Mapped[str | None] = mapped_column(String(1024))
     commit_sha: Mapped[str | None] = mapped_column(String(40))
 
