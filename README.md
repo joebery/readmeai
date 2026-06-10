@@ -1,4 +1,4 @@
-# ReadmeAI ![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow) ![License](https://img.shields.io/badge/license-not%20specified-lightgrey)
+# ReadmeAI ![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow) ![Python](https://img.shields.io/badge/python-3.12-blue) ![CSS](https://img.shields.io/badge/css-3%2B-blue) ![TypeScript](https://img.shields.io/badge/typescript-4%2B-blue) ![Docker](https://img.shields.io/badge/docker-20%2B-blue) ![License](https://img.shields.io/badge/license-not%20specified-lightgrey)
 
 ## Description
 ReadmeAI is an AI-powered README generator that creates comprehensive and professional README files for your GitHub repositories. By leveraging OpenAI's language model, ReadmeAI analyzes your repository's structure, files, and recent commits to generate a tailored README that enhances your project's visibility and usability.
@@ -14,10 +14,10 @@ ReadmeAI is an AI-powered README generator that creates comprehensive and profes
 | Technology         | Description                                   |
 |--------------------|-----------------------------------------------|
 | JavaScript         | The programming language used for the frontend. |
-| FastAPI            | A modern web framework for building APIs in the backend. |
-| PostgreSQL         | A powerful, open-source relational database.  |
-| Redis              | In-memory data structure store for caching.   |
-| OpenAI             | AI model used for generating README content.  |
+| Python             | The programming language used for the backend. |
+| CSS                | Styles the frontend application.              |
+| TypeScript         | Used for type safety in the frontend code.   |
+| Docker             | Containerization for easy deployment.         |
 
 ## Project Structure
 ```
@@ -96,20 +96,21 @@ docker-compose up --build
 ## Usage
 
 ### Estimate README Generation
-To estimate the README generation for a repository, send a POST request to the `/api/v1/analyses/estimate` endpoint:
+To estimate the README generation for a repository, send a POST request to the estimate endpoint:
 ```bash
-curl -X POST "http://localhost:8000/api/v1/analyses/estimate" \
+curl -X POST http://localhost:8000/api/v1/analyses/estimate \
 -H "Content-Type: application/json" \
 -d '{
-  "repo_url": "https://github.com/owner/repo",
-  "github_token": "your_github_token"
+  "repo_url": "https://github.com/yourusername/yourrepo",
+  "github_token": "your_github_token",
+  "style": "professional"
 }'
 ```
 
 ### Confirm and Generate README
-Once you've received the estimate, confirm the analysis and generate the README by sending a POST request to the `/api/v1/analyses` endpoint:
+Once you have the estimate, confirm the generation:
 ```bash
-curl -X POST "http://localhost:8000/api/v1/analyses" \
+curl -X POST http://localhost:8000/api/v1/analyses \
 -H "Content-Type: application/json" \
 -d '{
   "analysis_id": "your_analysis_id",
@@ -120,13 +121,19 @@ curl -X POST "http://localhost:8000/api/v1/analyses" \
 ```
 
 ## Recent Updates
-- **2026-06-10**: Frontend scaffold, analyze page, style picker, preview/push/regenerate endpoints implemented.
-- **2026-06-04**: Added mode 2 webhook, bot loop prevention, locked sections, and recent updates functionality.
-- **2026-06-04**: Updated README formatting and content for clarity and completeness.
-- **2026-06-04**: Enhanced README generation capabilities with additional project structure and commit history details.
+- **2026-06-10**: Merged branch 'main' of https://github.com/joebery/readmeai.
+- **2026-06-10**: Added multi-language badges, preview before push, regenerate with feedback, discard, and style picker features.
+- **2026-06-10**: Updated README documentation.
+- **2026-06-10**: Implemented frontend scaffold, analyze page, style picker, and preview/push/regenerate endpoints.
+- **2026-06-04**: Introduced mode 2 webhook, bot loop prevention, locked sections, and recent updates functionality.
+- **2026-06-04**: Updated README documentation.
+- **2026-06-04**: Fixed README.md license section formatting.
+- **2026-06-04**: Generated README with ReadmeAI.
+- **2026-06-04**: Updated README to include testing functionality section.
+- **2026-06-04**: Refactored README content and formatting.
 
 ## Contributing
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bugs you encounter.
+Contributions to ReadmeAI are welcome! Please feel free to submit a pull request or open an issue for any enhancements, bug fixes, or suggestions.
 
 ## License
-This project is licensed under an unspecified license. Please check the repository for more details.
+This project is not licensed under any specific license. Please check the repository for more details.
