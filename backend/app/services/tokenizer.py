@@ -72,10 +72,20 @@ def build_prompt(
 
     commits_str = "No commits found."
     if commits:
-        commits_str = "\n".join(
-            f"- `{c['sha']}` {c['date']} — {c['message']} ({c['author']})"
-            for c in commits
-        )
+        # Filter out README and docs commits before sending to AI
+        skip_keywords = ["readme", "docs:", "documentation", "[bot]", "update readme", "generate readme"]
+        filtered_commits = [
+            c for c in commits
+            if not any(kw in c["message"].lower() for kw in skip_keywords)
+        ]
+        filtered_commits = filtered_commits[:15]
+        if filtered_commits:
+            commits_str = "\n".join(
+                f"- `{c['sha']}` {c['date']} — {c['message']} ({c['author']})"
+                for c in filtered_commits
+            )
+        else:
+            commits_str = "No relevant commits found."
 
     style_str = ""
     if style_prompt:
@@ -93,7 +103,7 @@ Please apply this feedback in the new version.
     existing_str = ""
     if existing_readme:
         existing_str = f"""
-PREVIOUS README VERSION (for reference and diff):
+EXISTING README (currently on GitHub — preserve images, custom sections, and any content worth keeping):
 {existing_readme[:3000]}
 """
 
@@ -128,11 +138,20 @@ Rules:
   5. Project Structure — use the file tree provided above, formatted as a code block
   6. Installation — prerequisites, clone, configure, run
   7. Usage — real examples with actual commands
-  8. Recent Updates — use the commits above, plain English summary
+  8. 8. Recent Updates — follow these rules exactly:
+     - Maximum 15 entries, most recent first
+     - If there are more than 15, drop the oldest ones
+     - SKIP any commit that mentions README, docs, or documentation updates
+     - SKIP any commit message containing: "readme", "docs:", "documentation", "[bot]", "update readme", "generate readme"
+     - Format as a dated bullet list
   9. Contributing
   10. License
 - Be specific to THIS project, no generic placeholders
-- Never remove existing image references
+- - PRESERVE all existing images, GIFs, and image references from the existing README exactly as they are
+- PRESERVE any custom badges or shields the user has added that are not language or license badges
+- PRESERVE any custom sections that don't overlap with the standard sections (e.g. demo videos, screenshots, acknowledgements)
+- PRESERVE the general structure and tone if the existing README is already high quality
+- If the existing README has a custom header or banner image, keep it at the top
 - Use proper UTF-8 characters for the file tree (├── └── │)"""
 
 

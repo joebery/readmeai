@@ -35,6 +35,7 @@ def parse_repo_url(url: str) -> tuple[str, str]:
     return segments[0], segments[1]
 
 
+
 async def _run_pipeline(
     analysis_id: uuid.UUID,
     owner: str,
@@ -71,6 +72,7 @@ async def _run_pipeline(
 
             analysis.status = AnalysisStatus.confirming
             analysis.readme_content = output["readme_content"]
+            analysis.previous_readme = output.get("existing_readme", "")
             analysis.default_branch = output["default_branch"]
             await db.commit()
 

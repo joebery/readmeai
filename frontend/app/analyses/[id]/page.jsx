@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import ReadmeComparison from "../../../components/ReadmeComparison";
 
 const API = "http://localhost:8000";
 
@@ -76,7 +77,6 @@ export default function AnalysisPage() {
       if (!res.ok) throw new Error(data.detail || "Regenerate failed");
       setAnalysis(data);
       setFeedback("");
-      // Resume polling
       const poll = setInterval(async () => {
         const r = await fetch(`${API}/api/v1/analyses/${id}`);
         const d = await r.json();
@@ -108,7 +108,7 @@ export default function AnalysisPage() {
   const isComplete = analysis?.status === "complete";
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-12">
       {!analysis && !error && (
         <div className="text-center py-24">
           <div className="w-8 h-8 border-2 border-border2 border-t-accent rounded-full animate-spin mx-auto mb-4"></div>
@@ -124,12 +124,17 @@ export default function AnalysisPage() {
 
       {analysis && (
         <>
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight mb-1">README Preview</h1>
               <p className="text-sm text-muted">Review before pushing to GitHub</p>
             </div>
-            <StatusBadge status={analysis.status} />
+            <div className="flex items-center gap-3">
+              <button onClick={handleCopy} className="text-xs px-3 py-2 border border-border2 rounded-lg text-muted hover:text-white hover:border-muted transition-all">
+                {copied ? "Copied!" : "Copy markdown"}
+              </button>
+              <StatusBadge status={analysis.status} />
+            </div>
           </div>
 
           {isGenerating && (
@@ -142,18 +147,11 @@ export default function AnalysisPage() {
 
           {(isReady || isComplete) && analysis.readme_content && (
             <>
-              <div className="border border-border rounded-xl overflow-hidden mb-6">
-                <div className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border">
-                  <span className="text-xs text-muted font-mono">README.md</span>
-                  <button onClick={handleCopy} className="text-xs px-3 py-1 border border-border2 rounded text-muted hover:text-white hover:border-muted transition-all">
-                    {copied ? "Copied!" : "Copy markdown"}
-                  </button>
-                </div>
-                <div className="p-6 bg-bg markdown overflow-auto max-h-[600px]">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {analysis.readme_content}
-                  </ReactMarkdown>
-                </div>
+              <div className="mb-8">
+                <ReadmeComparison
+                  previousReadme={analysis.previous_readme || ""}
+                  newReadme={analysis.readme_content}
+                />
               </div>
 
               {isReady && !pushed && (
@@ -179,8 +177,8 @@ export default function AnalysisPage() {
                     </div>
                   )}
 
-                  <div className="flex gap-3">
-                    <button onClick={handlePush} disabled={pushing} className="flex-1 py-3 bg-accent text-black font-semibold rounded-lg hover:bg-green-400 transition-all disabled:opacity-50">
+                  <div className="flex gap-3 flex-wrap">
+                    <button onClick={handlePush} disabled={pushing} className="flex-1 min-w-[160px] py-3 bg-accent text-black font-semibold rounded-lg hover:bg-green-400 transition-all disabled:opacity-50">
                       {pushing ? "Pushing..." : "Push to GitHub →"}
                     </button>
                     <button onClick={() => setShowFeedback(!showFeedback)} className="px-5 py-3 border border-border2 rounded-lg text-muted hover:text-white hover:border-muted transition-all">
@@ -194,7 +192,7 @@ export default function AnalysisPage() {
               )}
 
               {(isComplete || pushed) && analysis.commit_url && (
-                <div className="flex items-center gap-4 p-4 bg-surface border border-accent border-opacity-30 rounded-xl">
+                <div className="flex items-center gap-4 p-4 bg-surface border border-accent border-opacity-30 rounded-xl mt-6">
                   <span className="text-accent text-xl">✓</span>
                   <div>
                     <div className="font-semibold text-sm">README pushed successfully</div>
@@ -204,7 +202,7 @@ export default function AnalysisPage() {
               )}
 
               {analysis.status === "failed" && (
-                <div className="p-4 bg-red-950 border border-red-800 rounded-xl text-red-400 text-sm">
+                <div className="p-4 bg-red-950 border border-red-800 rounded-xl text-red-400 text-sm mt-6">
                   {analysis.error_message || "Generation failed"}
                 </div>
               )}
