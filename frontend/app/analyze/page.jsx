@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import StylePicker from "../../components/StylePicker";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = "http://localhost:8000";
+console.log("API URL:", API);
 
 export default function AnalyzePage() {
   const router = useRouter();

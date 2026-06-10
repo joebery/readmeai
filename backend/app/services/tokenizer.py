@@ -61,6 +61,7 @@ def build_prompt(
     style_prompt: str | None = None,
     feedback: str | None = None,
     existing_readme: str | None = None,
+    languages: list[str] | None = None,
 ) -> str:
     files_str = "\n\n".join(
         f"### {f.path}\n```\n{f.content}\n```"
@@ -100,7 +101,7 @@ PREVIOUS README VERSION (for reference and diff):
 
 Repository: {metadata['full_name']}
 Description: {metadata.get('description') or 'N/A'}
-Language: {metadata.get('language') or 'N/A'}
+Languages: {", ".join(languages) if languages else metadata.get("language") or "N/A"}
 Stars: {metadata.get('stars', 0)}
 License: {metadata.get('license_name') or 'not specified'}
 Topics: {metadata.get('topics') or 'none'}
@@ -120,7 +121,7 @@ Files:
 Rules:
 - Output ONLY raw markdown, no code fences around the entire output
 - Include these sections in order:
-  1. Title with shields.io badges for language and license
+  1. Title with shields.io badges for EACH language in the languages list, plus license
   2. Description
   3. Features
   4. Tech Stack table

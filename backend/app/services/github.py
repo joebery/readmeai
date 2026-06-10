@@ -13,6 +13,16 @@ class GitHubClient:
             "Accept": "application/vnd.github.v3+json",
         }
 
+    async def get_languages(self, owner: str, name: str) -> list[str]:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(
+                f"{self.BASE_URL}/repos/{owner}/{name}/languages",
+                headers=self.headers,
+            )
+            if not r.is_success:
+                return []
+            return list(r.json().keys())
+
     async def get_repo_metadata(self, owner: str, name: str) -> dict[str, Any]:
         async with httpx.AsyncClient() as client:
             r = await client.get(

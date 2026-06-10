@@ -18,6 +18,7 @@ async def run_initial_pipeline(
     # 1. Fetch metadata
     metadata = await client.get_repo_metadata(owner, name)
     branch = metadata["default_branch"]
+    languages = await client.get_languages(owner, name)
 
     # 2. Fetch all files
     files, total_count = await fetch_repo_files(
@@ -38,6 +39,7 @@ async def run_initial_pipeline(
         style_prompt=style_prompt,
         feedback=feedback,
         existing_readme=existing_readme,
+        languages=languages,
     )
     readme_content = await generate_readme(prompt, openai_key)
 
