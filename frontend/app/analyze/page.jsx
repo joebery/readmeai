@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import StylePicker from "../../components/StylePicker";
 
 const API = "http://localhost:8000";
-console.log("API URL:", API);
 
 export default function AnalyzePage() {
   const router = useRouter();

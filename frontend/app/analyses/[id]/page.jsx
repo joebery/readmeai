@@ -178,9 +178,15 @@ export default function AnalysisPage() {
                   )}
 
                   <div className="flex gap-3 flex-wrap">
+                    {ghToken ? (
                     <button onClick={handlePush} disabled={pushing} className="flex-1 min-w-[160px] py-3 bg-accent text-black font-semibold rounded-lg hover:bg-green-400 transition-all disabled:opacity-50">
-                      {pushing ? "Pushing..." : "Push to GitHub →"}
+                        {pushing ? "Pushing..." : "Push to GitHub →"}
                     </button>
+                    ) : (
+                    <button onClick={handleCopy} className="flex-1 min-w-[160px] py-3 bg-accent text-black font-semibold rounded-lg hover:bg-green-400 transition-all">
+                        {copied ? "Copied! ✓" : "Copy README markdown"}
+                    </button>
+                    )}
                     <button onClick={() => setShowFeedback(!showFeedback)} className="px-5 py-3 border border-border2 rounded-lg text-muted hover:text-white hover:border-muted transition-all">
                       Regenerate
                     </button>

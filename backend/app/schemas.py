@@ -32,7 +32,7 @@ class RepoLocksUpdate(BaseModel):
 
 class EstimateRequest(BaseModel):
     repo_url: str
-    github_token: str
+    github_token: str 
     style: str | None = None
     style_url: str | None = None
 
@@ -57,7 +57,7 @@ class EstimateResponse(BaseModel):
 
 class AnalysisCreate(BaseModel):
     analysis_id: uuid.UUID
-    github_token: str
+    github_token: str 
     openai_key: str
     confirmed: bool
     style: str | None = None
@@ -87,7 +87,7 @@ class RegenerateRequest(BaseModel):
 
 class UpdateEstimateRequest(BaseModel):
     repo_url: str
-    github_token: str
+    github_token: str 
 
     @field_validator("repo_url")
     @classmethod
