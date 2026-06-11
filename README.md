@@ -1,4 +1,5 @@
-# ReadmeAI ![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow) ![Python](https://img.shields.io/badge/python-3.12-blue) ![CSS](https://img.shields.io/badge/css-3%2B-blue) ![TypeScript](https://img.shields.io/badge/typescript-4%2B-blue) ![Docker](https://img.shields.io/badge/docker-20%2B-blue) ![License](https://img.shields.io/badge/license-not%20specified-lightgrey)
+# ReadmeAI 
+![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow) ![Python](https://img.shields.io/badge/python-3.12-blue) ![CSS](https://img.shields.io/badge/css-3%2B-blue) ![TypeScript](https://img.shields.io/badge/typescript-4%2B-blue) ![Docker](https://img.shields.io/badge/docker-20%2B-blue) ![License](https://img.shields.io/badge/license-not%20specified-lightgrey)
 
 ## Description
 ReadmeAI is an AI-powered README generator that creates comprehensive and professional README files for your GitHub repositories. By leveraging OpenAI's language model, ReadmeAI analyzes your repository's structure, files, and recent commits to generate a tailored README that enhances your project's visibility and usability.
@@ -90,30 +91,36 @@ OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### Run the Application
-To run the application, use Docker Compose:
+Use Docker Compose to build and run the application:
 ```bash
 docker-compose up --build
 ```
 
 ## Usage
-1. Navigate to `http://localhost:3000` in your web browser.
-2. Paste your GitHub repository URL into the designated field.
+1. Open your web browser and navigate to `http://localhost:3000`.
+2. Paste your GitHub repository URL into the input field.
 3. Enter your GitHub token and OpenAI API key.
-4. Select a style for your README.
-5. Click on "Generate README" to initiate the process.
+4. Select a README style from the available options.
+5. Click on "Generate README" to create your README file.
+6. Review the generated README and push it to your GitHub repository.
 
 ## Recent Updates
-- `c4ed04c` 2026-06-10 — feat: multi-language badges, preview before push, regenerate with feedback, discard, style picker (joebery)
-- `8c1c5f1` 2026-06-10 — feat: frontend scaffold, analyze page, style picker, preview/push/regenerate endpoints (joebery)
-- `0076c17` 2026-06-04 — feat: mode 2 webhook, bot loop prevention, locked sections, recent updates (joebery)
+- **2026-06-10**: Added a readme comparison component to show existing README diffs and improved the results page layout for responsiveness.
+- **2026-06-10**: Implemented a diff view for README comparisons, preserving existing content and filtering out bot commits from recent updates.
+- **2026-06-10**: Enhanced the README generation process to allow for a preview before pushing changes to the repository.
+- **2026-06-10**: Updated the README to include application usage instructions and recent updates.
+- **2026-06-10**: Improved the multi-language badge support in the README.
+- **2026-06-10**: Added the ability to regenerate README files based on user feedback.
+- **2026-06-10**: Enhanced the style picker component for better user experience.
+- **2026-06-10**: Merged recent changes from the main branch to keep the project up to date.
 
 ## Contributing
-We welcome contributions to ReadmeAI! Please follow these steps to contribute:
+Contributions are welcome! Please follow these steps to contribute:
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature/YourFeature`).
 3. Make your changes and commit them (`git commit -m 'Add some feature'`).
 4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a Pull Request.
+5. Open a pull request.
 
 ## License
-This project is licensed under the terms of the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
