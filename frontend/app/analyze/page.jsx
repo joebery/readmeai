@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import StylePicker from "../../components/StylePicker";
 
-const API = "http://localhost:8000";
+const API = "https://readmeai-production.up.railway.app";
 
 export default function AnalyzePage() {
   const router = useRouter();

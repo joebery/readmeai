@@ -6,24 +6,11 @@ from app.services.file_reader import RepoFile
 ENCODING = tiktoken.encoding_for_model("gpt-4o-mini")
 
 STYLE_PRESETS = {
-    "minimal": """Style: Minimal and clean. No emojis. Short sentences. 
-Brief sections. Gets to the point immediately. Inspired by sindresorhus.""",
-
-    "professional": """Style: Professional and detailed. Use badges extensively. 
-Include tables. Formal tone. Comprehensive sections. 
-Inspired by microsoft/vscode.""",
-
-    "opensource": """Style: Open source community focused. Welcoming tone. 
-Heavy emphasis on contributing section. Include code of conduct mention. 
-Inspired by facebook/react.""",
-
-    "portfolio": """Style: Portfolio focused for job seekers. Highlight technical 
-decisions and architecture choices. Mention specific skills used. 
-Personal but professional tone.""",
-
-    "startup": """Style: Startup/product focused. Marketing language. 
-Lead with value proposition. Features first. Energetic tone. 
-Inspired by vercel/next.js.""",
+    "minimal": """Style: Minimal and clean. No emojis. Short sentences. Brief sections. Gets to the point immediately. Inspired by sindresorhus.""",
+    "professional": """Style: Professional and detailed. Use badges extensively. Include tables. Formal tone. Comprehensive sections. Inspired by microsoft/vscode.""",
+    "opensource": """Style: Open source community focused. Welcoming tone. Heavy emphasis on contributing section. Include code of conduct mention. Inspired by facebook/react.""",
+    "portfolio": """Style: Portfolio focused for job seekers. Highlight technical decisions and architecture choices. Mention specific skills used. Personal but professional tone.""",
+    "startup": """Style: Startup/product focused. Marketing language. Lead with value proposition. Features first. Energetic tone. Inspired by vercel/next.js.""",
 }
 
 
@@ -70,22 +57,13 @@ def build_prompt(
 
     file_tree = build_file_tree(files)
 
+    # Pass all commits to the AI and let it decide what to skip
     commits_str = "No commits found."
     if commits:
-        # Filter out README and docs commits before sending to AI
-        skip_keywords = ["readme", "docs:", "documentation", "[bot]", "update readme", "generate readme"]
-        filtered_commits = [
-            c for c in commits
-            if not any(kw in c["message"].lower() for kw in skip_keywords)
-        ]
-        filtered_commits = filtered_commits[:15]
-        if filtered_commits:
-            commits_str = "\n".join(
-                f"- `{c['sha']}` {c['date']} — {c['message']} ({c['author']})"
-                for c in filtered_commits
-            )
-        else:
-            commits_str = "No relevant commits found."
+        commits_str = "\n".join(
+            f"- `{c['sha']}` {c['date']} — {c['message']} ({c['author']})"
+            for c in commits[:20]
+        )
 
     style_str = ""
     if style_prompt:
@@ -93,21 +71,13 @@ def build_prompt(
 
     feedback_str = ""
     if feedback:
-        feedback_str = f"""
-USER FEEDBACK ON PREVIOUS VERSION:
-The user reviewed the README and requested these changes:
-{feedback}
-Please apply this feedback in the new version.
-"""
+        feedback_str = f"\nUSER FEEDBACK ON PREVIOUS VERSION:\nThe user reviewed the README and requested these changes:\n{feedback}\nPlease apply this feedback in the new version.\n"
 
     existing_str = ""
     if existing_readme:
-        existing_str = f"""
-EXISTING README (currently on GitHub — preserve images, custom sections, and any content worth keeping):
-{existing_readme[:3000]}
-"""
+        existing_str = f"\nEXISTING README (currently on GitHub — use this as your base, preserve images and custom sections):\n{existing_readme[:3000]}\n"
 
-    return f"""You are an expert technical writer. Generate a complete, professional README.md.
+    return f"""You are an expert technical writer. Update or generate a professional README.md.
 
 Repository: {metadata['full_name']}
 Description: {metadata.get('description') or 'N/A'}
@@ -130,28 +100,29 @@ Files:
 
 Rules:
 - Output ONLY raw markdown, no code fences around the entire output
-- Include these sections in order:
-  1. Title with shields.io badges for EACH language in the languages list, plus license
+- If an existing README is provided, USE IT AS YOUR BASE — do not rewrite from scratch
+- Keep all sections that are accurate and well written
+- Update sections that are outdated based on the files you have read
+- Add any missing standard sections
+- PRESERVE all existing images, GIFs, badges and image references exactly as they are
+- PRESERVE any custom sections the user has added
+- Include these sections if not already present:
+  1. Title with shields.io badges for EACH language detected
   2. Description
   3. Features
   4. Tech Stack table
-  5. Project Structure — use the file tree provided above, formatted as a code block
+  5. Project Structure — use the file tree provided, formatted as a code block
   6. Installation — prerequisites, clone, configure, run
   7. Usage — real examples with actual commands
-  8. 8. Recent Updates — follow these rules exactly:
+  8. Recent Updates — follow these rules exactly:
      - Maximum 15 entries, most recent first
-     - If there are more than 15, drop the oldest ones
-     - SKIP any commit that mentions README, docs, or documentation updates
-     - SKIP any commit message containing: "readme", "docs:", "documentation", "[bot]", "update readme", "generate readme"
+     - SKIP any commit containing: [bot], docs: update readme, docs: generate readme, readmeai
+     - SKIP merge commits
+     - Write each entry in plain English describing what changed for the user
      - Format as a dated bullet list
   9. Contributing
   10. License
 - Be specific to THIS project, no generic placeholders
-- - PRESERVE all existing images, GIFs, and image references from the existing README exactly as they are
-- PRESERVE any custom badges or shields the user has added that are not language or license badges
-- PRESERVE any custom sections that don't overlap with the standard sections (e.g. demo videos, screenshots, acknowledgements)
-- PRESERVE the general structure and tone if the existing README is already high quality
-- If the existing README has a custom header or banner image, keep it at the top
 - Use proper UTF-8 characters for the file tree (├── └── │)"""
 
 

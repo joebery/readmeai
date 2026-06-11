@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import ReadmeComparison from "../../../components/ReadmeComparison";
 
-const API = "http://localhost:8000";
+const API = "https://readmeai-production.up.railway.app";
 
 export default function AnalysisPage() {
   const { id } = useParams();
