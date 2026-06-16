@@ -23,13 +23,16 @@ from app.services.tokenizer import STYLE_PRESETS, build_prompt, count_tokens, es
 
 router = APIRouter(prefix="/api/v1/analyses", tags=["analyses"])
 
-
+#Parser for GitHub repo URLs
 def parse_repo_url(url: str) -> tuple[str, str]:
     clean = url.strip().rstrip("/").removesuffix(".git")
+    #clean example value: github.com/joebery/readmeai
     parts = clean.split("github.com/")
+    #parts example value: ['', 'joebery/readmeai']
     if len(parts) != 2:
         raise HTTPException(status_code=400, detail="Invalid GitHub URL")
     segments = parts[1].split("/")
+    #segments example value: ['joebery', 'readmeai']
     if len(segments) < 2:
         raise HTTPException(status_code=400, detail="URL must include owner and repo name")
     return segments[0], segments[1]
@@ -42,24 +45,37 @@ async def _run_pipeline(
     name: str,
     github_token: str,
     openai_key: str,
-    style_prompt: str | None = None,
-    feedback: str | None = None,
-    existing_readme: str | None = None,
-) -> None:
-    from app.database import AsyncSessionLocal
+    style_prompt: str | None = None, #None = None are optional
+    feedback: str | None = None, # These may not always be provided
+    existing_readme: str | None = None, # so they are set to None by default
+) -> None: # means this function does not return anything
+    
+    from app.database import AsyncSessionLocal #Importing AsyncSessionLocal here 
+    # as a new one is required for each background task to avoid session conflicts
 
-    async with AsyncSessionLocal() as db:
+
+
+    #PHASE 1: FIND THE ANALYSIS
+    #Looks up the analysis record in the database to make sure it exists before proceeding.
+    #--------------------------------------------------------------------------------------
+    async with AsyncSessionLocal() as db: 
         try:
-            result = await db.execute(
-                select(Analysis).where(Analysis.id == analysis_id)
+            result = await db.execute( 
+                select(Analysis).where(Analysis.id == analysis_id) 
             )
             analysis = result.scalar_one_or_none()
             if not analysis:
                 return
-
+     
+    #PHASE 2: UPDATE STATUS TO GENERATING
+    #Tells the database the pipeline has started so the fronend spinner changes
+    #--------------------------------------------------------------------------------------
             analysis.status = AnalysisStatus.generating
             await db.commit()
 
+    #PHASE 3: RUN THE PIPELINE
+    #Calls the readme.py service to fetch files, calls OpenAI, returns README
+    #--------------------------------------------------------------------------------------
             output = await run_initial_pipeline(
                 owner=owner,
                 name=name,
@@ -69,6 +85,10 @@ async def _run_pipeline(
                 feedback=feedback,
                 existing_readme=existing_readme,
             )
+    #PHASE 4: SAVES THE RESULT
+    #Saves the generated README to the database and changes status to confirming so the 
+    # frontend can show the preview
+    #--------------------------------------------------------------------------------------
 
             analysis.status = AnalysisStatus.confirming
             analysis.readme_content = output["readme_content"]
@@ -76,6 +96,11 @@ async def _run_pipeline(
             analysis.default_branch = output["default_branch"]
             await db.commit()
 
+    #PHASE 5: ERROR HANDLING
+    #If anythng goes wrong in phases 1-4, catches the error and saves it to the database
+    #  so the frontend can show it
+    #--------------------------------------------------------------------------------------
+    
         except Exception as e:
             async with AsyncSessionLocal() as err_db:
                 err_result = await err_db.execute(
@@ -122,7 +147,7 @@ async def estimate(
             )
             if style_readme:
                 style_prompt = f"""Analyse and match the style of this README exactly:
-- Tone, structure, section order, emoji usage, badge style, length
+- Tone, structure, section order, emoji usage, badge style
 {style_readme[:3000]}"""
         except Exception:
             pass
